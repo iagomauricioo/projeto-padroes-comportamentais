@@ -1,21 +1,47 @@
 package br.edu.clinica.service;
 
+import br.edu.clinica.observer.ClinicaObserver;
+import br.edu.clinica.observer.ClinicaSubject;
+import br.edu.clinica.observer.EventoClinico;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificacaoService {
-    private final List<Runnable> observadores = new ArrayList<>();
+/**
+ * ConcreteSubject do padrão Observer para disparo de eventos clínicos aos setores inscritos.
+ */
+public class NotificacaoService implements ClinicaSubject {
+    private final List<ClinicaObserver> observadores = new ArrayList<>();
 
-    public void adicionarObservador(Runnable obs){
-        // PADRÃO SUGERIDO: OBSERVER
-        // Ideia: trocar Runnable por interface Observer {update(evento)}
-        // e notificar todos quando um evento ocorrer (estado da consulta mudou etc.).
-        // TODO alunos: criar Subject/Observer específicos.
-        observadores.add(obs);
+    @Override
+    public void adicionarObservador(ClinicaObserver obs) {
+        if (!observadores.contains(obs)) {
+            observadores.add(obs);
+            System.out.println("[Subject - NotificacaoService] Observador inscrito: " + obs.getNomeObservador());
+        }
     }
 
-    public void notificarMudanca(String evento){
-        System.out.println("[Service] Notificando: " + evento);
-        observadores.forEach(Runnable::run); // placeholder simplificado
+    @Override
+    public void removerObservador(ClinicaObserver obs) {
+        if (observadores.remove(obs)) {
+            System.out.println("[Subject - NotificacaoService] Observador removido: " + obs.getNomeObservador());
+        }
+    }
+
+    @Override
+    public void notificarObservadores(EventoClinico evento) {
+        System.out.println("[Subject - NotificacaoService] Notificando " + observadores.size()
+                + " observador(es) sobre: " + evento);
+        for (ClinicaObserver obs : new ArrayList<>(observadores)) {
+            obs.atualizar(evento);
+        }
+    }
+
+    public void notificarMudanca(String descricaoEvento) {
+        notificarObservadores(new EventoClinico("MUDANCA_ESTADO_CONSULTA", descricaoEvento, "Paciente Geral"));
+    }
+
+    public int getTotalObservadores() {
+        return observadores.size();
     }
 }

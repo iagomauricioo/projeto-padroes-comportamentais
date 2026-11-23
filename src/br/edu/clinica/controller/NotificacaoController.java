@@ -1,5 +1,9 @@
 package br.edu.clinica.controller;
 
+import br.edu.clinica.observer.EnfermagemObserver;
+import br.edu.clinica.observer.EventoClinico;
+import br.edu.clinica.observer.FarmaciaObserver;
+import br.edu.clinica.observer.PainelAuditoriaObserver;
 import br.edu.clinica.service.ComunicacaoService;
 import br.edu.clinica.service.NotificacaoService;
 import br.edu.clinica.view.ConsoleView;
@@ -18,10 +22,22 @@ public class NotificacaoController {
 
     public void dispararNotificacoes(){
         view.titulo("Observer — Eventos e Assinantes");
-        // placeholder: usando Runnable até os alunos criarem Observer de verdade
-        notificacaoService.adicionarObservador(() -> System.out.println("[Observer] Enfermagem avisada"));
-        notificacaoService.adicionarObservador(() -> System.out.println("[Observer] Farmácia avisada"));
-        notificacaoService.notificarMudanca("Consulta entrou em EM_ATENDIMENTO");
+        var enfermagem = new EnfermagemObserver();
+        var farmacia = new FarmaciaObserver();
+        var auditoria = new PainelAuditoriaObserver();
+
+        notificacaoService.adicionarObservador(enfermagem);
+        notificacaoService.adicionarObservador(farmacia);
+        notificacaoService.adicionarObservador(auditoria);
+
+        notificacaoService.notificarObservadores(
+                new EventoClinico("INICIO_ATENDIMENTO", "Consulta entrou em EM_ATENDIMENTO", "Ana (000.111.222-33)")
+        );
+
+        notificacaoService.removerObservador(farmacia);
+        notificacaoService.notificarObservadores(
+                new EventoClinico("ALTA_CLINICA", "Consulta CONCLUIDA e paciente liberado", "Ana (000.111.222-33)")
+        );
         view.linha();
     }
 }

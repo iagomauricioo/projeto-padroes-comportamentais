@@ -50,3 +50,18 @@ Teste:
 ```bash
 java -cp out br.edu.clinica.test.MementoTest
 ```
+
+## Observer — João Vitor Correia Araújo
+
+Antes, o `NotificacaoService` guardava uma `List<Runnable>`: os setores eram avisados, mas não recebiam nenhuma informação sobre o evento.
+
+- `observer/ClinicaSubject` e `observer/ClinicaObserver`: interfaces do padrão (`atualizar(EventoClinico)`)
+- `observer/EventoClinico`: dados do evento (tipo, descrição, paciente, horário)
+- `EnfermagemObserver`, `FarmaciaObserver`, `PainelAuditoriaObserver`: setores que reagem ao evento
+- `service/NotificacaoService`: subject; inscreve, remove e notifica
+
+Teste:
+
+```bash
+java -cp out br.edu.clinica.test.ObserverTest
+```
