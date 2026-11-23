@@ -1,5 +1,9 @@
 package br.edu.clinica.controller;
 
+import br.edu.clinica.command.AgendaInvoker;
+import br.edu.clinica.command.AlterarConsultaCommand;
+import br.edu.clinica.command.CancelarConsultaCommand;
+import br.edu.clinica.command.CriarConsultaCommand;
 import br.edu.clinica.model.*;
 import br.edu.clinica.service.*;
 import br.edu.clinica.view.ConsoleView;
@@ -17,14 +21,21 @@ public class AtendimentoController {
     private final EstrategiaAtendimentoService estrategiaService = new EstrategiaAtendimentoService();
 
     public void registrarConsulta(){
-        view.titulo("Command — Registrar/Alterar/Cancelar");
+        view.titulo("Command — Registrar/Alterar/Cancelar (Iago Mauricio)");
         var p = new Paciente("Ana", "000.111.222-33");
         var m = new Medico("Carlos", "CRM-1234", "Clínico");
-        var c = new Consulta(p, m, LocalDateTime.now().plusDays(1));
+        var dataInicial = LocalDateTime.now().plusDays(1).withHour(14).withMinute(0).withSecond(0).withNano(0);
+        var c = new Consulta(p, m, dataInicial);
 
-        atendimentoService.criarConsulta(c);
-        atendimentoService.alterarConsulta(c);
-        atendimentoService.cancelarConsulta(c);
+        var invoker = new AgendaInvoker();
+        invoker.agendarComando(new CriarConsultaCommand(atendimentoService, c));
+        invoker.agendarComando(new AlterarConsultaCommand(atendimentoService, c, dataInicial.plusHours(2)));
+        invoker.agendarComando(new CancelarConsultaCommand(atendimentoService, c));
+
+        invoker.processarFila();
+        // Demonstra o desfazer (undo) do cancelamento
+        invoker.desfazerUltimoComando();
+        view.info("Estado final da consulta após undo do cancelamento: " + c.getEstado());
         view.linha();
     }
 

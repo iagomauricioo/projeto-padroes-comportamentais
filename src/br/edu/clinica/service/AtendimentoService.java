@@ -2,25 +2,35 @@ package br.edu.clinica.service;
 
 import br.edu.clinica.model.Consulta;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Receiver do padrão Command para gestão de consultas clínicas.
+ * Responsável: Iago Mauricio (Grupo 049)
+ */
 public class AtendimentoService {
+    private final List<Consulta> consultasAtivas = new ArrayList<>();
 
-    public void criarConsulta(Consulta consulta){
-        // PADRÃO SUGERIDO: COMMAND
-        // Ideia: encapsular esta ação como um objeto "Command" (CriarConsultaCommand)
-        // e enviar para um "Invoker" que processa uma fila de comandos.
-        // TODO alunos: criar interfaces Command/Invoker e reestruturar chamadas.
-        System.out.println("[Service] Criando consulta: " + consulta);
+    public void criarConsulta(Consulta consulta) {
+        consulta.setEstado("AGENDADA");
+        if (!consultasAtivas.contains(consulta)) {
+            consultasAtivas.add(consulta);
+        }
+        System.out.println("[Receiver - AtendimentoService] Criando consulta: " + consulta);
     }
 
-    public void alterarConsulta(Consulta consulta){
-        // PADRÃO SUGERIDO: COMMAND (outro comando da mesma hierarquia)
-        // TODO alunos: implementar AlterarConsultaCommand e registrar no Invoker.
-        System.out.println("[Service] Alterando consulta: " + consulta);
+    public void alterarConsulta(Consulta consulta) {
+        System.out.println("[Receiver - AtendimentoService] Alterando consulta: " + consulta);
     }
 
-    public void cancelarConsulta(Consulta consulta){
-        // PADRÃO SUGERIDO: COMMAND (Cancelamento como comando)
-        // TODO alunos: implementar CancelarConsultaCommand.
-        System.out.println("[Service] Cancelando consulta: " + consulta);
+    public void cancelarConsulta(Consulta consulta) {
+        consulta.setEstado("CANCELADA");
+        System.out.println("[Receiver - AtendimentoService] Cancelando consulta: " + consulta);
+    }
+
+    public List<Consulta> getConsultasAtivas() {
+        return Collections.unmodifiableList(consultasAtivas);
     }
 }
