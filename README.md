@@ -35,3 +35,18 @@ Teste:
 ```bash
 java -cp out br.edu.clinica.test.CommandTest
 ```
+
+## Memento — Victor Hugo Calheiros
+
+Antes, o `ProntuarioService` guardava o texto atual e uma pilha de `String` dentro do próprio serviço, misturando o estado do prontuário com o histórico e sem guardar quem escreveu.
+
+- `memento/ProntuarioMemento`: snapshot imutável (texto, médico, data/hora), visível só dentro do pacote
+- `memento/ProntuarioOriginator`: o prontuário; cria e restaura mementos
+- `memento/HistoricoProntuarioCaretaker`: guarda a pilha de mementos sem ler o conteúdo
+- `service/ProntuarioService`: usa os três para escrever e desfazer
+
+Teste:
+
+```bash
+java -cp out br.edu.clinica.test.MementoTest
+```

@@ -56,9 +56,13 @@ public class AtendimentoController {
 
     public void historicoProntuario(){
         view.titulo("Memento — Histórico / Desfazer");
-        prontuarioService.escrever("Entrada 1: sinais vitais estáveis");
-        prontuarioService.escrever("Entrada 2: prescrição adicionada");
-        prontuarioService.desfazer(); // restaura Entrada 1 (placeholder)
+        prontuarioService.escrever("Entrada 1: sinais vitais estáveis (PA 120/80)", "Dr. Carlos");
+        prontuarioService.escrever("Entrada 2: suspeita clínica registrada e prescrição adicionada", "Dra. Marta");
+        prontuarioService.escrever("Entrada 3: anotação incorreta inserida por engano", "Dra. Marta");
+
+        view.info("Snapshots armazenados no Caretaker: " + prontuarioService.listarSnapshotsSalvos().size());
+        prontuarioService.desfazer(); // desfaz Entrada 3 -> volta para Entrada 2
+        prontuarioService.desfazer(); // desfaz Entrada 2 -> volta para Entrada 1
         view.linha();
     }
 
